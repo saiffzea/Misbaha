@@ -46,21 +46,220 @@
         }
 
         .header .time {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .header .designer {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 8px;
+            font-style: italic;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         /* Prayer Times */
         .prayer-times {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(15, 23, 42, 0.95);
             border-radius: 20px;
             padding: 15px;
             margin-bottom: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            color: #333;
+            color: white;
             position: relative;
             overflow: hidden;
+        }
+
+        .app {
+            text-align: center;
+            font-family: sans-serif;
+        }
+
+        .app h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #38bdf8;
+        }
+
+        .clock {
+            width: 180px;
+            height: 180px;
+            border: 6px solid #333;
+            border-radius: 50%;
+            margin: 15px auto;
+            position: relative;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            transform: translateX(-50%);
+        }
+
+        .hour {
+            width: 5px;
+            height: 50px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .minute {
+            width: 3px;
+            height: 65px;
+            background: #aaa;
+            border-radius: 1px;
+        }
+
+        .second {
+            width: 2px;
+            height: 80px;
+            background: #ef4444;
+            border-radius: 1px;
+        }
+
+        .digital {
+            font-size: 18px;
+            color: #10b981;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .date {
+            font-size: 14px;
+            color: #64748b;
+            margin: 5px 0;
+        }
+
+        .app h3 {
+            font-size: 16px;
+            margin: 15px 0 10px 0;
+            color: #f59e0b;
+        }
+
+        .countdown {
+            font-size: 20px;
+            color: #38bdf8;
+            font-weight: bold;
+        }
+
+        .app input, .app button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+        }
+
+        .app input {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 60%;
+        }
+
+        .app button {
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .app button:hover {
+            background: #1d4ed8;
+            transform: scale(1.05);
+        }
+
+        .prayer-box {
+            background: rgba(17, 17, 17, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px auto;
+            width: 90%;
+            max-width: 300px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-bottom: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+
+        .row:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+        .row.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .row span:first-child {
+            font-weight: bold;
+            color: #f59e0b;
+        }
+
+        .row.active span:first-child {
+            color: white;
+        }
+
+        .row span:last-child {
+            font-family: monospace;
+            color: #e2e8f0;
+        }
+
+        #countdown {
+            font-size: 22px;
+            color: #38bdf8;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 400px) {
+            .clock {
+                width: 150px;
+                height: 150px;
+                border-width: 4px;
+            }
+            
+            .hour {
+                height: 40px;
+            }
+            
+            .minute {
+                height: 55px;
+            }
+            
+            .second {
+                height: 65px;
+            }
+            
+            .digital {
+                font-size: 16px;
+            }
+            
+            .countdown {
+                font-size: 18px;
+            }
         }
 
         .prayer-times h3 {
@@ -511,6 +710,76 @@
             color: #555;
         }
 
+        /* Masbaha 3D */
+        .masbaha-3d {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: black;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .masbaha-controls-3d {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .control-btn-3d {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-btn-3d:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .control-btn-3d.reset {
+            background: rgba(255, 67, 54, 0.3);
+            border-color: rgba(255, 67, 54, 0.5);
+        }
+
+        .control-btn-3d.reset:hover {
+            background: rgba(255, 67, 54, 0.5);
+            border-color: rgba(255, 67, 54, 0.7);
+        }
+
+        #count {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        #c {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
         /* Masbaha Counter */
         .masbaha {
             background: rgba(255, 255, 255, 0.95);
@@ -937,68 +1206,32 @@
         <div class="header">
             <h1><i class="fas fa-mosque"></i> المسبحة الإلكترونية</h1>
             <div class="time" id="currentTime"></div>
+            <div class="designer">تصميم: سيف الجميلي</div>
         </div>
 
         <!-- Prayer Times -->
         <div class="prayer-times" id="prayerTimesSection">
-            <h3><i class="fas fa-clock"></i> مواقيت الصلاة</h3>
-            
-            <!-- 3D Clock -->
-            <div class="prayer-clock-3d" id="prayerClock3D">
-                <div class="clock-face">
-                    <div class="clock-center"></div>
-                    
-                    <!-- Clock Numbers -->
-                    <div class="clock-numbers">
-                        <div class="clock-number twelve">12</div>
-                        <div class="clock-number three">3</div>
-                        <div class="clock-number six">6</div>
-                        <div class="clock-number nine">9</div>
-                    </div>
-                    
-                    <!-- Clock Hands -->
-                    <div class="clock-hand hour-hand" id="hourHand"></div>
-                    <div class="clock-hand minute-hand" id="minuteHand"></div>
-                    <div class="clock-hand second-hand" id="secondHand"></div>
-                    
-                    <!-- Digital Time Display -->
-                    <div class="digital-time" id="digitalTime">00:00:00</div>
-                    
-                    <!-- Date Display -->
-                    <div class="date-display" id="dateDisplay">2026-04-02</div>
+            <div class="app">
+                <h2>🕌 مواقيت الصلاة</h2>
+                
+                <div class="clock">
+                    <div class="hand hour" id="hour"></div>
+                    <div class="hand minute" id="minute"></div>
+                    <div class="hand second" id="second"></div>
                 </div>
+
+                <div class="digital" id="time"></div>
+                <div class="date" id="date"></div>
+
+                <input id="cityInput" placeholder="اكتب مدينتك">
+                <button onclick="manualCity()">بحث</button>
+
+                <div id="nextPrayer"></div>
+                <div id="countdown"></div>
+                
+                <div class="prayer-box" id="prayerTimes"></div>
             </div>
-            
-            <!-- Prayer Times Board -->
-            <div class="prayer-times-board">
-                <h4><i class="fas fa-mosque"></i> مواقيت الصلاة</h4>
-                <div class="prayer-times-list" id="prayerTimesList">
-                    <div class="prayer-time-item" id="fajr-item">
-                        <div class="prayer-time-name">الفجر</div>
-                        <div class="prayer-time-value">04:25</div>
-                    </div>
-                    <div class="prayer-time-item" id="sunrise-item">
-                        <div class="prayer-time-name">الشروق</div>
-                        <div class="prayer-time-value">05:52</div>
-                    </div>
-                    <div class="prayer-time-item" id="dhuhr-item">
-                        <div class="prayer-time-name">الظهر</div>
-                        <div class="prayer-time-value">12:08</div>
-                    </div>
-                    <div class="prayer-time-item" id="asr-item">
-                        <div class="prayer-time-name">العصر</div>
-                        <div class="prayer-time-value">15:42</div>
-                    </div>
-                    <div class="prayer-time-item" id="maghrib-item">
-                        <div class="prayer-time-name">المغرب</div>
-                        <div class="prayer-time-value">18:26</div>
-                    </div>
-                    <div class="prayer-time-item" id="isha-item">
-                        <div class="prayer-time-name">العشاء</div>
-                        <div class="prayer-time-value">19:56</div>
-                    </div>
-                </div>
-            </div>
+        </div>
 
         <!-- Weather -->
         <div class="weather">
@@ -1042,43 +1275,18 @@
 
         <!-- Masbaha Tab -->
         <div id="masbaha-tab" class="tab-content active">
-            <div class="masbaha">
-                <div class="masbaha-visual">
-                    <div class="current-dhikr" id="currentDhikrDisplay">سبحان الله</div>
-                    <div class="masbaha-string" id="masbahaString">
-                        <!-- Beads will be generated here -->
-                    </div>
-                    <div class="masbaha-info">
-                        <div class="count-display">العدد: <span id="counter">0</span></div>
-                        <div class="count-display">المجموع: <span id="totalCount">0</span></div>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                </div>
-                
-                <div class="tasbih-buttons">
-                    <button class="tasbih-btn active" onclick="setTasbih('سبحان الله')">سبحان الله</button>
-                    <button class="tasbih-btn" onclick="setTasbih('الحمد لله')">الحمد لله</button>
-                    <button class="tasbih-btn" onclick="setTasbih('لا إله إلا الله')">لا إله إلا الله</button>
-                    <button class="tasbih-btn" onclick="setTasbih('الله أكبر')">الله أكبر</button>
-                </div>
-                
-                <div class="masbaha-controls">
-                    <button class="control-btn primary" onclick="incrementCounter()">
-                        <i class="fas fa-plus"></i> تسبيح
-                    </button>
-                    <button class="control-btn" onclick="resetCurrent()">
-                        <i class="fas fa-redo"></i> إعادة
-                    </button>
-                    <button class="control-btn danger" onclick="resetAll()">
-                        <i class="fas fa-trash"></i> مسح الكل
+            <!-- 3D Masbaha Canvas -->
+            <div class="masbaha-3d">
+                <div id="count">0</div>
+                <canvas id="c"></canvas>
+                <div class="masbaha-controls-3d">
+                    <button class="control-btn-3d reset" onclick="resetCount()">
+                        <i class="fas fa-redo"></i> تصفير
                     </button>
                 </div>
             </div>
         </div>
-
-        <!-- Azkar Tab -->
+                    <!-- Azkar Tab -->
         <div id="azkar-tab" class="tab-content">
             <div class="azkar-section">
                 <h3><i class="fas fa-pray"></i> أذكار الصباح والمساء</h3>
@@ -1548,6 +1756,183 @@
             });
         }
 
+        // 3D Masbaha
+        const canvas = document.getElementById("c");
+        const ctx = canvas.getContext("2d");
+
+        // Set canvas size
+        function resizeCanvas() {
+            const container = document.querySelector('.masbaha-3d');
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+        }
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        let beads = [];
+        let count = 0;
+
+        // Sound
+        let sound = new Audio("https://www.soundjay.com/buttons/sounds/button-16.mp3");
+
+        // Vibration
+        function vibrate(){
+            if(navigator.vibrate) navigator.vibrate(30);
+        }
+
+        // Setup 3D
+        let cx = canvas.width / 2;
+        let cy = canvas.height / 2;
+        let radius = Math.min(canvas.width, canvas.height) * 0.3;
+        let depth = 200;
+
+        for(let i = 0; i < 33; i++){
+            let angle = i / 33 * Math.PI * 2;
+            beads.push({
+                angle,
+                speed: 0.01,
+                z: Math.random() * depth,
+                vz: 0,
+                size: 8
+            });
+        }
+
+        // Draw
+        function draw(){
+            ctx.fillStyle = "rgba(0,0,0,0.3)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Update center on resize
+            cx = canvas.width / 2;
+            cy = canvas.height / 2;
+            radius = Math.min(canvas.width, canvas.height) * 0.3;
+
+            beads.forEach(b => {
+                // Physics
+                b.angle += b.speed;
+                b.z += b.vz;
+                b.vz *= 0.9;
+
+                // 3D projection
+                let scale = 300 / (300 + b.z);
+                let x = cx + Math.cos(b.angle) * radius * scale;
+                let y = cy + Math.sin(b.angle) * radius * scale;
+                let size = b.size * scale;
+
+                // Draw glow
+                let grad = ctx.createRadialGradient(x, y, 0, x, y, size * 2);
+                grad.addColorStop(0, "#0ff");
+                grad.addColorStop(1, "transparent");
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(x, y, size * 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Bead
+                ctx.fillStyle = "cyan";
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        // Reset count
+        function resetCount() {
+            count = 0;
+            document.getElementById("count").innerText = count;
+            
+            // Reset animation
+            beads.forEach(b => {
+                b.vz = -20;
+                b.speed = 0.1;
+                setTimeout(() => {
+                    b.speed = 0.01;
+                }, 500);
+            });
+            
+            // Flash effect
+            canvas.style.background = "radial-gradient(#ff4444,#000)";
+            setTimeout(() => canvas.style.background = "black", 200);
+            
+            // Vibration
+            vibrate();
+        }
+
+        // Tasbeeh
+        function tasbeeh(){
+            count++;
+            document.getElementById("count").innerText = count;
+
+            // Sound + vibration
+            sound.currentTime = 0;
+            sound.play();
+            vibrate();
+
+            // Physics interaction
+            beads.forEach(b => {
+                b.vz = (Math.random() - 0.5) * 10;
+                b.speed += 0.02;
+
+                setTimeout(() => b.speed -= 0.02, 200);
+            });
+
+            // Flash
+            canvas.style.background = "radial-gradient(#0ff,#000)";
+            setTimeout(() => canvas.style.background = "black", 100);
+        }
+
+        // Touch/click
+        canvas.addEventListener("click", tasbeeh);
+
+        // Drag to rotate
+        let dragging = false;
+
+        canvas.addEventListener("mousedown", () => dragging = true);
+        canvas.addEventListener("mouseup", () => dragging = false);
+        canvas.addEventListener("mouseleave", () => dragging = false);
+
+        canvas.addEventListener("mousemove", (e) => {
+            if(dragging){
+                beads.forEach(b => {
+                    b.angle += e.movementX * 0.002;
+                });
+            }
+        });
+
+        // Touch events
+        canvas.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            dragging = true;
+        });
+
+        canvas.addEventListener("touchend", (e) => {
+            e.preventDefault();
+            dragging = false;
+        });
+
+        canvas.addEventListener("touchmove", (e) => {
+            e.preventDefault();
+            if(dragging && e.touches.length > 0){
+                beads.forEach(b => {
+                    b.angle += e.touches[0].clientX * 0.002;
+                });
+            }
+        });
+
+        // Auto spin
+        setInterval(() => {
+            beads.forEach(b => {
+                b.angle += 0.005;
+            });
+        }, 16);
+
+        // Start 3D masbaha
+        draw();
+
         // GPS
         navigator.geolocation.getCurrentPosition(pos => {
             updateWeather(pos.coords.latitude, pos.coords.longitude);
@@ -1886,6 +2271,278 @@
                 }, 100);
             }
         }
+
+        // Prayer Times - New Code
+        let prayers = {};
+        let lastCity = localStorage.getItem("city");
+
+        // أسماء عربية
+        function ar(p){
+            return {
+                Fajr:"الفجر",
+                Dhuhr:"الظهر",
+                Asr:"العصر",
+                Maghrib:"المغرب",
+                Isha:"العشاء"
+            }[p];
+        }
+
+        // تحديث الساعة
+        function updateClock(){
+            let now = new Date();
+
+            let h = now.getHours();
+            let m = now.getMinutes();
+            let s = now.getSeconds();
+
+            document.getElementById("hour").style.transform =
+            `translateX(-50%) rotate(${(h%12)*30 + m*0.5}deg)`;
+
+            document.getElementById("minute").style.transform =
+            `translateX(-50%) rotate(${m*6}deg)`;
+
+            document.getElementById("second").style.transform =
+            `translateX(-50%) rotate(${s*6}deg)`;
+
+            document.getElementById("time").innerText =
+            now.toLocaleTimeString('ar-SA');
+
+            document.getElementById("date").innerText =
+            now.toLocaleDateString('ar-SA');
+        }
+
+        // عرض الصلوات
+        function show(){
+            if (!prayers || Object.keys(prayers).length === 0) {
+                document.getElementById("prayerTimes").innerHTML = `
+                    <div class="row">
+                        <span>جاري التحميل...</span>
+                    </div>
+                `;
+                return;
+            }
+
+            let now = new Date();
+            let current = now.getHours()*60 + now.getMinutes();
+
+            let html = "";
+
+            for(let key of ["Fajr","Dhuhr","Asr","Maghrib","Isha"]){
+                let [h,m] = prayers[key].split(":");
+                let time = h*60 + parseInt(m);
+
+                let active = (current >= time && current < time+60) ? "active" : "";
+
+                html += `<div class="row ${active}">
+                    <span>${ar(key)}</span>
+                    <span>${prayers[key]}</span>
+                </div>`;
+            }
+
+            document.getElementById("prayerTimes").innerHTML = html;
+        }
+
+        // عد تنازلي
+        function nextPrayer(){
+            if (!prayers || Object.keys(prayers).length === 0) {
+                document.getElementById("nextPrayer").innerText = "🕌 جاري تحميل...";
+                document.getElementById("countdown").innerText = "--:--:--";
+                return;
+            }
+
+            let now = new Date();
+            let nowSec = now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds();
+
+            let next="", nextTime=0;
+
+            for(let key of ["Fajr","Dhuhr","Asr","Maghrib","Isha"]){
+                let [h,m] = prayers[key].split(":");
+                let t = h*3600 + m*60;
+
+                if(t > nowSec){
+                    next = key;
+                    nextTime = t;
+                    break;
+                }
+            }
+
+            if(!next){
+                let [h,m]=prayers["Fajr"].split(":");
+                next="Fajr";
+                nextTime = h*3600 + m*60 + 86400;
+            }
+
+            let diff = nextTime - nowSec;
+
+            let h = Math.floor(diff/3600);
+            let m = Math.floor((diff%3600)/60);
+            let s = diff%60;
+
+            document.getElementById("nextPrayer").innerText =
+            "🕌 القادمة: " + ar(next);
+
+            document.getElementById("countdown").innerText =
+            `${h}:${m}:${s}`;
+        }
+
+        // جلب حسب مدينة
+        function getByCity(city){
+            fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=auto&method=5`)
+            .then(res=>res.json())
+            .then(data=>{
+                prayers = data.data.timings;
+                localStorage.setItem("city", city);
+                show();
+                nextPrayer();
+            })
+            .catch(error=>{
+                console.error("Error loading prayer times:", error);
+            });
+        }
+
+        // بحث عربي
+        function manualCity(){
+            let input = document.getElementById("cityInput").value;
+            if (!input) return;
+
+            fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${input}`)
+            .then(res=>res.json())
+            .then(data=>{
+                if(data.results && data.results.length > 0){
+                    let city = data.results[0].name;
+                    getByCity(city);
+                }else{
+                    alert("المدينة غير موجودة");
+                }
+            })
+            .catch(error=>{
+                console.error("Error searching city:", error);
+            });
+        }
+
+        // GPS
+        function getLocation(){
+            navigator.geolocation.getCurrentPosition(
+                pos=>{
+                    fetch(`https://api.aladhan.com/v1/timings?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&method=5`)
+                    .then(res=>res.json())
+                    .then(data=>{
+                        prayers = data.data.timings;
+                        show();
+                        nextPrayer();
+                    });
+                },
+                ()=>{
+                    getByCity("Baghdad");
+                }
+            );
+        }
+
+        // تشغيل
+        if(lastCity){
+            getByCity(lastCity);
+        }else{
+            getLocation();
+        }
+
+        // تحديث مستمر
+        setInterval(()=>{
+            updateClock();
+            if(Object.keys(prayers).length){
+                show();
+                nextPrayer();
+            }
+        },1000);
+
+        // Start immediately
+        updateClock();
+        if(Object.keys(prayers).length){
+            show();
+            nextPrayer();
+        }
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const timeString = `${hours}:${minutes}:${seconds}`;
+            
+            console.log("Current time:", timeString); // Debug
+            
+            const timeElement = document.getElementById('currentTime');
+            if (timeElement) {
+                timeElement.textContent = timeString;
+                console.log("Time updated successfully");
+            } else {
+                console.error("currentTime element not found");
+            }
+            
+            // Update 3D clock hands
+            update3DClockHands(now);
+        }
+
+        // Update 3D clock hands
+        function update3DClockHands(now) {
+            const hours = now.getHours() % 12;
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            // Calculate angles
+            const secondAngle = (seconds * 6) - 90;
+            const minuteAngle = (minutes * 6) - 90;
+            const hourAngle = (hours * 30 + minutes * 0.5) - 90;
+            
+            // Update hands
+            const secondHand = document.getElementById('secondHand');
+            const minuteHand = document.getElementById('minuteHand');
+            const hourHand = document.getElementById('hourHand');
+            
+            if (secondHand) {
+                secondHand.style.transform = `translate(-50%, -100%) rotateZ(${secondAngle}deg)`;
+            }
+            if (minuteHand) {
+                minuteHand.style.transform = `translate(-50%, -100%) rotateZ(${minuteAngle}deg)`;
+            }
+            if (hourHand) {
+                hourHand.style.transform = `translate(-50%, -100%) rotateZ(${hourAngle}deg)`;
+            }
+            
+            // Update digital time and date
+            const digitalTime = document.getElementById('digitalTime');
+            const dateDisplay = document.getElementById('dateDisplay');
+            
+            if (digitalTime) {
+                digitalTime.textContent = timeString;
+            }
+            if (dateDisplay) {
+                const dateString = now.toLocaleDateString('ar-SA', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+                dateDisplay.textContent = dateString;
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("App initialized");
+            
+            // Start time immediately
+            updateTime();
+            
+            // Update time every second
+            setInterval(updateTime, 1000);
+            
+            // Also update every 100ms for testing
+            setInterval(() => {
+                const now = new Date();
+                console.log("Quick check:", now.getSeconds());
+            }, 100);
+            
+            loadWeather();
+            loadSavedWeather();
+        });
 
         // Add keyboard support
         document.addEventListener('keydown', function(event) {
