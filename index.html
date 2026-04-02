@@ -1500,29 +1500,39 @@
         }
 
         function updateWeather(lat, lon){
-            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m`)
+            fetch(`https://api.weatherapi.com/v1/current.json?key=62647a895cc24533a7f120015260204&q=${lat},${lon}&aqi=yes`)
             .then(res => res.json())
             .then(data => {
-                let w = data.current_weather;
+                // درجة الحرارة (دقيق جداً)
+                document.getElementById("temperature").innerText =
+                    data.current.temp_c + "°C";
 
-                // درجة الحرارة
-                document.getElementById("temperature").innerText = w.temperature + "°C";
+                // اسم المدينة
+                document.getElementById("location").innerText =
+                    data.location.name;
 
-                // الوصف
-                document.getElementById("weatherDesc").innerText = getWeatherDesc(w.weathercode);
+                // الوصف (ضباب/غائم/الخ)
+                document.getElementById("weatherDesc").innerText =
+                    data.current.condition.text;
 
-                // النصيحة
-                document.getElementById("weatherAdvice").innerText = getAdvice(w.temperature);
+                // الرطوبة
+                document.getElementById("humidity").innerText =
+                    data.current.humidity + "%";
 
                 // الرياح
-                if(document.getElementById("wind"))
-                    document.getElementById("wind").innerText = w.windspeed + " km/h";
-
-                // الرطوبة (تقريبية)
-                if(data.hourly && data.hourly.relativehumidity_2m){
-                    document.getElementById("humidity").innerText =
-                    data.hourly.relativehumidity_2m[0] + "%";
+                if(document.getElementById("wind")){
+                    document.getElementById("wind").innerText =
+                        data.current.wind_kph + " km/h";
                 }
+
+                // النصيحة الذكية
+                let t = data.current.temp_c;
+                let advice = "👍 الجو مناسب";
+
+                if(t < 10) advice = "🧥 برد";
+                else if(t > 35) advice = "💧 حر";
+
+                document.getElementById("weatherAdvice").innerText = advice;
             });
         }
 
@@ -1540,18 +1550,7 @@
 
         // GPS
         navigator.geolocation.getCurrentPosition(pos => {
-            let lat = pos.coords.latitude;
-            let lon = pos.coords.longitude;
-
-            getCity(lat, lon);
-            updateWeather(lat, lon);
-
-            // تحديث كل 10 دقائق
-            setInterval(()=>{
-                updateWeather(lat, lon);
-            }, 600000);
-        }, () => {
-            document.getElementById("location").innerText = "فعل GPS";
+            updateWeather(pos.coords.latitude, pos.coords.longitude);
         });
 
         // Weather (real weather API)
