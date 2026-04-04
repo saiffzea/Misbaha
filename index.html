@@ -796,10 +796,6 @@ color:#fff;
     <div id="nextPrayerName" style="font-size:18px;font-weight:bold;color:#ffd700;margin-bottom:5px;">--</div>
     <div id="countdown" style="font-size:16px;color:#98fb98;">--</div>
 </div>
-<div style="text-align:center;margin-top:15px;">
-    <button onclick="testAdhan()" style="background:linear-gradient(135deg, #22c55e 0%, #16a34a 100%);font-size:12px;padding:8px 15px;">🔊 اختبار الأذان</button>
-    <button onclick="toggleAdhanSound()" id="soundToggle" style="background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%);font-size:12px;padding:8px 15px;">🔇 كتم الصوت</button>
-</div>
 </div>
 </div>
 
@@ -828,10 +824,6 @@ color:#fff;
     </div>
 </div>
 <p id="qdir" style="font-size:18px;color:#ffd700;margin-top:15px;">--</p>
-<div style="text-align:center;margin-top:15px;">
-    <button onclick="testQiblaSound()" style="background:linear-gradient(135deg, #22c55e 0%, #16a34a 100%);font-size:12px;padding:8px 15px;">🔊 اختبار صوت القبلة</button>
-    <button onclick="toggleQiblaSound()" id="qiblaSoundToggle" style="background:linear-gradient(135deg, #ef4444 0%, #dc2626 100%);font-size:12px;padding:8px 15px;">🔇 كتم الصوت</button>
-</div>
 </div>
 </div>
 
@@ -967,7 +959,6 @@ let adhanEnabled = true;
 let adhanAudio = null;
 let prayerTimes = {};
 let lastPlayedPrayer = "";
-let nextPrayerInterval = null;
 
 // تهيئة صوت الأذان
 function initAdhan() {
@@ -986,30 +977,6 @@ function playAdhan() {
         });
     } catch(e) {
         console.log('خطأ في تشغيل الأذان:', e);
-    }
-}
-
-// اختبار الأذان
-function testAdhan() {
-    if (!adhanAudio) {
-        initAdhan();
-    }
-    playAdhan();
-}
-
-// تشغيل/كتم الصوت
-function toggleAdhanSound() {
-    adhanEnabled = !adhanEnabled;
-    const btn = document.getElementById('soundToggle');
-    if (adhanEnabled) {
-        btn.innerHTML = '🔇 كتم الصوت';
-        btn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
-    } else {
-        btn.innerHTML = '🔊 تشغيل الصوت';
-        btn.style.background = 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)';
-        if (adhanAudio) {
-            adhanAudio.pause();
-        }
     }
 }
 
@@ -1039,7 +1006,6 @@ function checkPrayerTimes() {
             }
             
             lastPlayedPrayer = prayer.name;
-            showNotification('حان وقت صلاة ' + prayer.name);
         }
     });
     
@@ -1144,50 +1110,6 @@ function updateCountdown(minutes) {
     }
     
     document.getElementById('countdown').textContent = timeString;
-}
-
-// إشعار للمستخدم
-function showNotification(message) {
-    // التحقق من دعم الإشعارات
-    if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('تطبيق إسلامي', {
-            body: message,
-            icon: '🕌',
-            sound: 'https://www.islamicfinder.org/audio/adhan/Adhan-Ahmad-Nuaim-Makkah.mp3'
-        });
-    } else if ('Notification' in window && Notification.permission !== 'denied') {
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-                new Notification('تطبيق إسلامي', {
-                    body: message,
-                    icon: '🕌'
-                });
-            }
-        });
-    }
-    
-    // إشعار مرئي داخل التطبيق
-    const notificationDiv = document.createElement('div');
-    notificationDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(135deg, #ffd700, #ffed4e);
-        color: #1e293b;
-        padding: 15px 25px;
-        border-radius: 15px;
-        font-weight: bold;
-        z-index: 9999;
-        box-shadow: 0 10px 30px rgba(255,215,0,0.5);
-        animation: slideDown 0.5s ease-out;
-    `;
-    notificationDiv.textContent = '🕌 ' + message;
-    document.body.appendChild(notificationDiv);
-    
-    setTimeout(() => {
-        notificationDiv.remove();
-    }, 5000);
 }
 
 // إضافة حركة الإشعار
@@ -1353,10 +1275,10 @@ document.getElementById("prayerTimes").innerHTML='<div style="color:#ff6b6b;">خ
 
 // 🧭 القبلة
 const k={lat:21.4225,lon:39.8262};
-let qiblaSoundEnabled = true;
 let qiblaAudio = null;
 let qiblaDirection = 0;
 let currentDirection = 0;
+let qiblaFound = false;
 
 // تهيئة صوت القبلة
 function initQiblaSound() {
@@ -1366,7 +1288,7 @@ function initQiblaSound() {
 
 // تشغيل صوت القبلة عند وجودها
 function playQiblaSound() {
-    if (!qiblaSoundEnabled || !qiblaAudio) return;
+    if (!qiblaAudio) return;
     
     try {
         qiblaAudio.currentTime = 0;
@@ -1375,30 +1297,6 @@ function playQiblaSound() {
         });
     } catch(e) {
         console.log('خطأ في تشغيل صوت القبلة:', e);
-    }
-}
-
-// اختبار صوت القبلة
-function testQiblaSound() {
-    if (!qiblaAudio) {
-        initQiblaSound();
-    }
-    playQiblaSound();
-}
-
-// تشغيل/كتم صوت القبلة
-function toggleQiblaSound() {
-    qiblaSoundEnabled = !qiblaSoundEnabled;
-    const btn = document.getElementById('qiblaSoundToggle');
-    if (qiblaSoundEnabled) {
-        btn.innerHTML = '🔇 كتم الصوت';
-        btn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
-    } else {
-        btn.innerHTML = '🔊 تشغيل الصوت';
-        btn.style.background = 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)';
-        if (qiblaAudio) {
-            qiblaAudio.pause();
-        }
     }
 }
 
@@ -1427,12 +1325,15 @@ document.getElementById("qdir").innerText=`اتجاه القبلة: ${Math.round
 // تحديث موضع علامة القبلة على الخريطة
 updateQiblaMarker(dir);
 
-// تشغيل الصوت عند وجود القبلة (عندما يكون الاتجاه صحيحاً)
-if (Math.abs(dir) < 5 && Math.abs(dir) < 5) {
-    if (!qiblaAudio.playing || qiblaAudio.paused) {
+// التحقق من وجود اتجاه القبلة (دقة ±5 درجات)
+if (Math.abs(dir) <= 5) {
+    if (!qiblaFound) {
+        qiblaFound = true;
         playQiblaSound();
         showQiblaNotification();
     }
+} else {
+    qiblaFound = false;
 }
 }
 });
