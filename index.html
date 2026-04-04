@@ -868,11 +868,11 @@ color:#fff;
 
 <!-- القائمة -->
 <div class="nav">
-<button onclick="show('weather')">🌦️ طقس</button>
-<button onclick="show('prayer')">🕌 صلاة</button>
-<button onclick="show('qibla')">🧭 قبلة</button>
-<button onclick="show('tasbeeh')">🧿 مسبحة</button>
-<button onclick="show('clockPage')">⏰ ساعة</button>
+<button onclick="console.log('زر الطقس تم الضغط'); show('weather')" style="background:red; color:white; border:2px solid white;">🌦️ طقس</button>
+<button onclick="console.log('زر الصلاة تم الضغط'); show('prayer')" style="background:blue; color:white; border:2px solid white;">🕌 صلاة</button>
+<button onclick="console.log('زر القبلة تم الضغط'); show('qibla')" style="background:green; color:white; border:2px solid white;">🧭 قبلة</button>
+<button onclick="console.log('زر المسبحة تم الضغط'); show('tasbeeh')" style="background:purple; color:white; border:2px solid white;">🧿 مسبحة</button>
+<button onclick="console.log('زر الساعة تم الضغط'); show('clockPage')" style="background:orange; color:white; border:2px solid white;">⏰ ساعة</button>
 </div>
 
 </div>
@@ -881,8 +881,39 @@ color:#fff;
 
 // تبديل الصفحات
 function show(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
+    console.log('الانتقال إلى الصفحة:', id); // للتصحيح
+    alert('الانتقال إلى: ' + id); // تنبيه للتأكد
+    
+    // إخفاء جميع الصفحات
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    
+    // إظهار الصفحة المطلوبة
+    const targetPage = document.getElementById(id);
+    if (targetPage) {
+        targetPage.classList.add("active");
+        console.log('تم إظهار الصفحة:', id);
+    } else {
+        console.error('الصفحة غير موجودة:', id);
+    }
+}
+
+// تهيئة التطبيق عند التحميل
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('تم تحميل التطبيق');
+    alert('تم تحميل التطبيق - جاري تهيئة الصفحة');
+    
+    // عرض صفحة الطقس افتراضياً
+    show('weather');
+});
+
+// اختبار الأزرار
+function testButtons() {
+    console.log('اختبار الأزرار');
+    const buttons = document.querySelectorAll('.nav button');
+    console.log('عدد الأزرار:', buttons.length);
+    buttons.forEach((btn, index) => {
+        console.log(`زر ${index}:`, btn.textContent, btn.onclick);
+    });
 }
 
 // ساعة عقارب
@@ -934,16 +965,26 @@ function getHijriDate(date) {
     const hijriMonths = ['محرم', 'صفر', 'ربيع الأول', 'ربيع الثاني', 'جمادى الأولى', 'جمادى الثانية', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'];
     
     // تحويل بسيط للتاريخ الهجري (تقريبي)
-    const dayOffset = Math.floor((date - new Date('2024-07-07')) / (1000 * 60 * 60 * 24));
-    const hijriDay = (7 + dayOffset) % 30 || 30;
-    const hijriMonthIndex = Math.floor((dayOffset + 7) / 30) % 12;
-    const hijriYear = 1445 + Math.floor((dayOffset + 7) / 360);
-    
-    return {
-        day: hijriDay,
-        month: hijriMonths[hijriMonthIndex],
-        year: hijriYear
-    };
+    try {
+        const dayOffset = Math.floor((date - new Date('2024-07-07')) / (1000 * 60 * 60 * 24));
+        const hijriDay = (7 + dayOffset) % 30 || 30;
+        const hijriMonthIndex = Math.floor((dayOffset + 7) / 30) % 12;
+        const hijriYear = 1445 + Math.floor((dayOffset + 7) / 360);
+        
+        return {
+            day: hijriDay,
+            month: hijriMonths[hijriMonthIndex],
+            year: hijriYear
+        };
+    } catch(e) {
+        console.log('خطأ في حساب التاريخ الهجري:', e);
+        // fallback للتاريخ الهجري
+        return {
+            day: 27,
+            month: 'رمضان',
+            year: 1445
+        };
+    }
 }
 
 setInterval(updateClock, 1000);
@@ -1130,98 +1171,60 @@ document.head.appendChild(style);
 
 // 🌦️ الطقس
 function weather(lat,lon){
-fetch(`https://api.weatherapi.com/v1/current.json?key=62647a895cc24533a7f120015260204&q=${lat},${lon}`)
+fetch(`https://api.weatherapi.com/v1/current.json?key=62647a895cc24533a7f120015260204&q=${lat},${lon}&lang=ar`)
 .then(r=>r.json())
 .then(d=>{
-let temp = d.current.temp_c;
-let condition = d.current.condition.text.toLowerCase();
-let rain = d.current.precip_mm;
-let cloud = d.current.cloud;
+let temp=d.current.temp_c;
+let desc=d.current.condition.text;
 let isNight = d.current.is_day === 0;
-
-// عرض المدينة والدرجة
-document.getElementById("city").innerText = d.location.name;
-document.getElementById("temp").innerText = temp + "°C";
-
-// ترجمة وتحديد الإيقونة والوصف العربي
-let arabicDesc = "";
-let weatherIcon = "";
+let icon = document.getElementById("weatherIcon");
 let iconClass = "";
+let weatherDesc = "";
+let bgClass = "";
 
-if (isNight && (condition.includes("clear") || condition.includes("sunny"))) {
-    arabicDesc = "🌙 ليل صافي";
-    weatherIcon = "🌙";
-    iconClass = "moon-icon";
-} else if (!isNight && (condition.includes("sunny") || condition.includes("clear"))) {
-    arabicDesc = "☀️ مشمس";
-    weatherIcon = "☀️";
-    iconClass = "sun-icon";
-} else if (condition.includes("partly cloudy") || condition.includes("partly sunny")) {
-    arabicDesc = "⛅ غائم جزئي";
-    weatherIcon = "⛅";
-    iconClass = "cloud-icon";
-} else if (condition.includes("cloudy") || condition.includes("overcast")) {
-    arabicDesc = "☁️ غائم";
-    weatherIcon = "☁️";
-    iconClass = "cloud-icon";
-} else if (condition.includes("rain") || condition.includes("drizzle") || rain > 0) {
-    arabicDesc = "🌧️ ممطر";
-    weatherIcon = "🌧️";
+// تحديد الأيقونة والوصف والخلفية حسب الطقس والوقت
+if(desc.includes("مشمس") || desc.includes("صافي")) {
+    if(isNight) {
+        iconClass = "moon-icon";
+        weatherDesc = "ليلة صافية";
+        bgClass = "night-bg";
+    } else {
+        iconClass = "sun-icon";
+        weatherDesc = "مشمس";
+        bgClass = "sunny-bg";
+    }
+} else if(desc.includes("مطر") || desc.includes("مطر")) {
     iconClass = "rain-icon";
-} else if (condition.includes("snow") || condition.includes("blizzard")) {
-    arabicDesc = "❄️ ثلجي";
-    weatherIcon = "❄️";
+    weatherDesc = "ممطر";
+    bgClass = "rainy-bg";
+} else if(desc.includes("غائم")) {
+    iconClass = "cloud-icon";
+    weatherDesc = "غائم";
+    bgClass = "cloudy-bg";
+} else if(desc.includes("ثلج")) {
     iconClass = "snow-icon";
-} else if (condition.includes("thunder") || condition.includes("storm")) {
-    arabicDesc = "⛈️ عاصف";
-    weatherIcon = "⛈️";
-    iconClass = "rain-icon";
-} else if (condition.includes("fog") || condition.includes("mist")) {
-    arabicDesc = "🌫ى ضبابي";
-    weatherIcon = "🌫️";
-    iconClass = "cloud-icon";
-} else if (condition.includes("windy")) {
-    arabicDesc = "💨 عاصف رياح";
-    weatherIcon = "💨";
-    iconClass = "cloud-icon";
-} else if (isNight) {
-    arabicDesc = "� ليل غائم جزئي";
-    weatherIcon = "☁️";
-    iconClass = "cloud-icon";
+    weatherDesc = "مثلج";
+    bgClass = "snowy-bg";
 } else {
-    arabicDesc = "�🌤️ غائم جزئي";
-    weatherIcon = "🌤️";
-    iconClass = "cloud-icon";
+    iconClass = "sun-icon";
+    weatherDesc = "مشمس";
+    bgClass = "sunny-bg";
 }
 
-// تحديث الوصف والإيقونة
-document.getElementById("desc").innerText = arabicDesc;
-let iconElement = document.getElementById("weatherIcon");
-iconElement.innerText = weatherIcon;
-iconElement.className = "weather-icon " + iconClass;
+// تحديث الخلفية
+document.body.className = bgClass;
 
-// تغيير خلفية التطبيق حسب الطقس والوقت
-let body = document.body;
-if (isNight && (condition.includes("clear") || condition.includes("sunny"))) {
-    body.style.background = "linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%)";
-} else if (!isNight && (condition.includes("sunny") || condition.includes("clear"))) {
-    body.style.background = "linear-gradient(135deg, #f59e0b 0%, #f97316 50%, #ea580c 100%)";
-} else if (condition.includes("rain") || condition.includes("drizzle") || rain > 0) {
-    body.style.background = "linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%)";
-} else if (condition.includes("cloudy") || condition.includes("overcast")) {
-    body.style.background = "linear-gradient(135deg, #374151 0%, #4b5563 50%, #6b7280 100%)";
-} else if (condition.includes("snow") || condition.includes("blizzard")) {
-    body.style.background = "linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #a5b4fc 100%)";
-} else if (isNight) {
-    body.style.background = "linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%)";
-} else {
-    body.style.background = "linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%)";
-}
+// تحديث الأيقونة
+icon.className = iconClass;
 
+// تحديث النصوص
+document.getElementById("temp").innerText=temp+"°";
+document.getElementById("desc").innerText=weatherDesc;
 })
-.catch(()=>{
-document.getElementById("city").innerText="خطأ بالطقس";
-document.getElementById("desc").innerText="لا يمكن جلب البيانات";
+.catch(e=>{
+console.log('خطأ في الطقس:', e);
+document.getElementById("temp").innerText="--";
+document.getElementById("desc").innerText="خطأ";
 document.getElementById("weatherIcon").innerText="❌";
 });
 }
@@ -1268,10 +1271,10 @@ if (!adhanAudio) {
 // تحديث الصلاة القادمة والعد التنازلي فوراً
 updateNextPrayerAndCountdown();
 })
-.catch(()=>{
+.catch(e=>{
+console.log('خطأ في الصلاة:', e);
 document.getElementById("prayerTimes").innerHTML='<div style="color:#ff6b6b;">خطأ بجلب التوقيتات</div>';
 });
-}
 
 // 🧭 القبلة
 const k={lat:21.4225,lon:39.8262};
@@ -1384,8 +1387,10 @@ function showQiblaNotification() {
 
 // 📍 GPS + fallback قوي
 function startApp(){
+    console.log('بدء التطبيق');
 
 navigator.geolocation.getCurrentPosition(pos=>{
+    console.log('تم الحصول على الموقع:', pos.coords);
 
 let lat=pos.coords.latitude;
 let lon=pos.coords.longitude;
@@ -1398,7 +1403,8 @@ qibla(lat,lon);
 setInterval(checkPrayerTimes, 60000);
 checkPrayerTimes(); // تحقق فوري
 
-},()=>{
+},error=>{
+    console.log('خطأ في الموقع، استخدام fallback:', error);
 
 // fallback بغداد 💣
 let lat=33.3152;
@@ -1416,6 +1422,7 @@ checkPrayerTimes(); // تحقق فوري
 
 }
 
+// بدء التطبيق
 startApp();
 
 </script>
