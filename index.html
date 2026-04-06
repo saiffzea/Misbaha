@@ -227,52 +227,228 @@
         .qibla-compass {
             text-align: center;
             margin: 30px 0;
+            position: relative;
         }
 
-        .compass-circle {
-            width: 200px;
-            height: 200px;
+        .gps-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
             margin: 20px auto;
-            border: 3px solid rgba(255, 215, 0, 0.5);
+        }
+
+        .compass-outer {
+            width: 100%;
+            height: 100%;
+            border: 4px solid rgba(255, 215, 0, 0.6);
             border-radius: 50%;
             position: relative;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 60, 114, 0.9) 100%);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.1);
+        }
+
+        .compass-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            height: 90%;
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+        }
+
+        .compass-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #ffd700 0%, #ffed4e 50%, #fff59d 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            z-index: 10;
         }
 
         .compass-arrow {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 4px;
-            height: 80px;
-            background: linear-gradient(to top, transparent, #ffd700);
+            width: 6px;
+            height: 100px;
+            background: linear-gradient(to top, transparent 0%, #ffd700 30%, #ffed4e 70%, #fff59d 100%);
             transform-origin: center bottom;
             transform: translate(-50%, -100%) rotate(0deg);
-            transition: transform 1s ease-in-out;
+            transition: transform 0.5s ease-in-out;
+            z-index: 5;
         }
 
         .compass-arrow::before {
             content: '';
             position: absolute;
-            top: -10px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 15px solid #ffd700;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 25px solid #ffd700;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .compass-arrow-back {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 80px;
+            background: linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+            transform-origin: center top;
+            transform: translate(-50%, 0%) rotate(0deg);
+            transition: transform 0.5s ease-in-out;
+            z-index: 3;
+        }
+
+        .compass-marks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .compass-mark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 10px;
+            background: rgba(255, 215, 0, 0.6);
+            transform-origin: center;
+        }
+
+        .compass-mark.major {
+            height: 15px;
+            width: 3px;
+            background: rgba(255, 215, 0, 0.8);
+        }
+
+        .compass-directions {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
 
         .compass-direction {
             position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
             color: #ffd700;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .compass-direction.n { top: 10px; left: 50%; transform: translateX(-50%); }
+        .compass-direction.e { right: 10px; top: 50%; transform: translateY(-50%); }
+        .compass-direction.s { bottom: 10px; left: 50%; transform: translateX(-50%); }
+        .compass-direction.w { left: 10px; top: 50%; transform: translateY(-50%); }
+
+        .qibla-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.8) 0%, rgba(34, 197, 94, 0.4) 100%);
+            border: 2px solid rgba(34, 197, 94, 0.8);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 8;
+            animation: qiblaPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes qiblaPulse {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.1);
+                box-shadow: 0 0 30px rgba(34, 197, 94, 0.8);
+            }
+        }
+
+        .qibla-indicator::before {
+            content: '🕌';
+            font-size: 20px;
+        }
+
+        .gps-info {
+            margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%);
+            border-radius: 15px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .gps-coordinates {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+
+        .gps-coord {
+            text-align: center;
+            flex: 1;
+        }
+
+        .gps-coord-label {
+            color: #87ceeb;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .gps-coord-value {
+            color: #ffd700;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .gps-status {
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%);
+            border-radius: 10px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .gps-status-text {
+            color: #87ceeb;
+            font-size: 14px;
+        }
+
+        .gps-status.active .gps-status-text {
+            color: #22c55e;
+        }
+
+        .compass-accuracy {
+            text-align: center;
+            margin: 15px 0;
+            color: #87ceeb;
+            font-size: 14px;
+        }
+
+        .compass-accuracy-value {
+            color: #ffd700;
+            font-weight: bold;
         }
 
         .hijri-date {
@@ -442,12 +618,45 @@
                 <div class="card">
                     <h2 style="color: #ffd700; text-align: center; margin-bottom: 20px;">اتجاه القبلة</h2>
                     <div class="qibla-compass">
-                        <div class="compass-circle">
-                            <div class="compass-arrow" id="compassArrow"></div>
-                            <div class="compass-direction">القبلة</div>
+                        <div class="gps-container">
+                            <div class="compass-outer">
+                                <div class="compass-inner"></div>
+                                <div class="compass-marks" id="compassMarks"></div>
+                                <div class="compass-directions">
+                                    <div class="compass-direction n">N</div>
+                                    <div class="compass-direction e">E</div>
+                                    <div class="compass-direction s">S</div>
+                                    <div class="compass-direction w">W</div>
+                                </div>
+                                <div class="compass-arrow-back" id="compassArrowBack"></div>
+                                <div class="compass-arrow" id="compassArrow"></div>
+                                <div class="qibla-indicator" id="qiblaIndicator"></div>
+                                <div class="compass-center"></div>
+                            </div>
                         </div>
-                        <div style="color: #87ceeb; font-size: 18px;">اتجاه القبلة: <span id="qiblaDirection" style="color: #ffd700;">--</span>°</div>
-                        <div style="color: #ffd700; font-size: 16px; margin-top: 10px;">استخدم بوصلة الهاتف للدقة</div>
+                        
+                        <div class="gps-info">
+                            <div class="gps-coordinates">
+                                <div class="gps-coord">
+                                    <div class="gps-coord-label">خط العرض</div>
+                                    <div class="gps-coord-value" id="latitude">--</div>
+                                </div>
+                                <div class="gps-coord">
+                                    <div class="gps-coord-label">خط الطول</div>
+                                    <div class="gps-coord-value" id="longitude">--</div>
+                                </div>
+                            </div>
+                            <div class="gps-status" id="gpsStatus">
+                                <div class="gps-status-text">جاري تحديد الموقع...</div>
+                            </div>
+                            <div class="compass-accuracy">
+                                اتجاه القبلة: <span class="compass-accuracy-value" id="qiblaDirection">--</span>°
+                            </div>
+                        </div>
+                        
+                        <div style="color: #ffd700; font-size: 16px; margin-top: 10px; text-align: center;">
+                            📱 استخدم بوصلة الهاتف للدقة العالية
+                        </div>
                     </div>
                     <button onclick="showPage('home')" class="back-btn">🔙 العودة</button>
                 </div>
@@ -691,36 +900,107 @@
         }
 
         // تحديث القبلة
+        let currentHeading = 0;
+        let qiblaAngle = 0;
+        
         function updateQibla() {
+            // إنشاء علامات البوصلة
+            createCompassMarks();
+            
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
                     
-                    // حساب اتجاه القبلة
-                    const qiblaDirection = calculateQibla(lat, lon);
+                    // تحديث الإحداثيات
+                    document.getElementById('latitude').textContent = lat.toFixed(6) + '°';
+                    document.getElementById('longitude').textContent = lon.toFixed(6) + '°';
                     
-                    document.getElementById('qiblaDirection').textContent = Math.round(qiblaDirection);
+                    // حساب اتجاه القبلة
+                    qiblaAngle = calculateQibla(lat, lon);
+                    document.getElementById('qiblaDirection').textContent = Math.round(qiblaAngle);
+                    
+                    // تحديث حالة GPS
+                    const gpsStatus = document.getElementById('gpsStatus');
+                    gpsStatus.classList.add('active');
+                    gpsStatus.querySelector('.gps-status-text').textContent = 'تم تحديد الموقع بنجاح';
                     
                     // تفعيل البوصلة
                     if (window.DeviceOrientationEvent) {
-                        window.addEventListener('deviceorientation', handleOrientation);
+                        // طلب الإذن لاستخدام البوصلة (iOS 13+)
+                        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                            DeviceOrientationEvent.requestPermission()
+                                .then(response => {
+                                    if (response === 'granted') {
+                                        window.addEventListener('deviceorientation', handleOrientation);
+                                    }
+                                })
+                                .catch(console.error);
+                        } else {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                        }
                     }
+                    
+                    // تحديث مؤشر القبلة
+                    updateQiblaIndicator();
+                    
                 }, error => {
                     console.error('خطأ في تحديد الموقع:', error);
-                    document.getElementById('qiblaDirection').textContent = 'خطأ';
+                    const gpsStatus = document.getElementById('gpsStatus');
+                    gpsStatus.querySelector('.gps-status-text').textContent = 'خطأ في تحديد الموقع';
                 });
+            }
+        }
+
+        // إنشاء علامات البوصلة
+        function createCompassMarks() {
+            const marksContainer = document.getElementById('compassMarks');
+            marksContainer.innerHTML = '';
+            
+            for (let i = 0; i < 360; i += 30) {
+                const mark = document.createElement('div');
+                mark.className = i % 90 === 0 ? 'compass-mark major' : 'compass-mark';
+                mark.style.transform = `translate(-50%, -50%) rotate(${i}deg) translateY(-135px)`;
+                marksContainer.appendChild(mark);
             }
         }
 
         // التعامل مع اتجاه الجهاز
         function handleOrientation(event) {
-            const alpha = event.alpha; // اتجاه الجهاز
+            const alpha = event.alpha; // اتجاه الجهاز (0-360)
             if (alpha !== null) {
-                const compassArrow = document.getElementById('compassArrow');
-                if (compassArrow) {
-                    compassArrow.style.transform = `translate(-50%, -100%) rotate(${alpha}deg)`;
-                }
+                currentHeading = alpha;
+                updateCompassArrows();
+                updateQiblaIndicator();
+            }
+        }
+
+        // تحديث أسهم البوصلة
+        function updateCompassArrows() {
+            const compassArrow = document.getElementById('compassArrow');
+            const compassArrowBack = document.getElementById('compassArrowBack');
+            
+            if (compassArrow) {
+                compassArrow.style.transform = `translate(-50%, -100%) rotate(${currentHeading}deg)`;
+            }
+            
+            if (compassArrowBack) {
+                compassArrowBack.style.transform = `translate(-50%, 0%) rotate(${currentHeading}deg)`;
+            }
+        }
+
+        // تحديث مؤشر القبلة
+        function updateQiblaIndicator() {
+            const qiblaIndicator = document.getElementById('qiblaIndicator');
+            if (qiblaIndicator && qiblaAngle > 0) {
+                // حساب موقع مؤشر القبلة على البوصلة
+                const indicatorAngle = qiblaAngle - currentHeading;
+                const radius = 120; // نصف قطر البوصلة
+                
+                const x = Math.sin(indicatorAngle * Math.PI / 180) * radius;
+                const y = -Math.cos(indicatorAngle * Math.PI / 180) * radius;
+                
+                qiblaIndicator.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
             }
         }
 
