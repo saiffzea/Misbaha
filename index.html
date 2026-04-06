@@ -775,53 +775,107 @@
 
         // جلب الطقس
         function getWeather() {
+            // طلب الإذن للموقع أولاً
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        
+                        console.log('تم تحديد الموقع:', lat, lon); // للتتبع
+                        
+                        // استخدام API متقدم للطقس مع اسم المدينة
+                        fetch(`https://api.weatherapi.com/v1/current.json?key=demo&q=${lat},${lon}&lang=ar`)
+                            .then(response => response.json())
+                            .then(data => {
+                                // اسم المدينة والبلد
+                                const cityName = data.location.name;
+                                const countryName = data.location.country;
+                                const regionName = data.location.region;
+                                
+                                document.getElementById('cityName').textContent = cityName;
+                                document.getElementById('locationInfo').textContent = `${regionName}, ${countryName}`;
+                                
+                                // بيانات الطقس
+                                const temp = Math.round(data.current.temp_c);
+                                const description = data.current.condition.text;
+                                const icon = getWeatherIcon(data.current.condition.text);
+                                const humidity = data.current.humidity;
+                                const windSpeed = data.current.wind_kph;
+                                const pressure = data.current.pressure_mb;
+                                const visibility = data.current.vis_km;
+                                
+                                document.getElementById('temperature').textContent = `${temp}°`;
+                                document.getElementById('weatherDescription').textContent = description;
+                                document.getElementById('weatherIcon').textContent = icon;
+                                document.getElementById('humidity').textContent = `${humidity}%`;
+                                document.getElementById('windSpeed').textContent = `${windSpeed} كم/س`;
+                                document.getElementById('pressure').textContent = `${pressure} هـب`;
+                                document.getElementById('visibility').textContent = `${visibility} كم`;
+                            })
+                            .catch(error => {
+                                console.error('خطأ في WeatherAPI:', error);
+                                // استخدام API بديل
+                                getWeatherAlternative(lat, lon);
+                            });
+                    },
+                    error => {
+                        console.error('خطأ في GPS:', error);
+                        
+                        // محاولة استخدام GPS بدقة عالية
+                        navigator.geolocation.getCurrentPosition(
+                            position => {
+                                const lat = position.coords.latitude;
+                                const lon = position.coords.longitude;
+                                console.log('GPS عالي الدقة:', lat, lon);
+                                getWeatherAlternative(lat, lon);
+                            },
+                            error => {
+                                console.error('GPS عالي الدقة فشل:', error);
+                                // محاولة استخدام IP للموقع
+                                getLocationByIP();
+                            },
+                            {
+                                enableHighAccuracy: true,
+                                timeout: 10000,
+                                maximumAge: 0
+                            }
+                        );
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 15000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                console.log('المتصفح لا يدعم GPS');
+                getLocationByIP();
+            }
+        }
+
+        // تحديد الموقع عبر IP
+        function getLocationByIP() {
+            fetch('https://ipapi.co/json/')
+                .then(response => response.json())
+                .then(data => {
+                    const lat = data.latitude;
+                    const lon = data.longitude;
+                    const city = data.city;
+                    const country = data.country_name;
                     
-                    // استخدام API متقدم للطقس مع اسم المدينة
-                    fetch(`https://api.weatherapi.com/v1/current.json?key=demo&q=${lat},${lon}&lang=ar`)
-                        .then(response => response.json())
-                        .then(data => {
-                            // اسم المدينة والبلد
-                            const cityName = data.location.name;
-                            const countryName = data.location.country;
-                            const regionName = data.location.region;
-                            
-                            document.getElementById('cityName').textContent = cityName;
-                            document.getElementById('locationInfo').textContent = `${regionName}, ${countryName}`;
-                            
-                            // بيانات الطقس
-                            const temp = Math.round(data.current.temp_c);
-                            const description = data.current.condition.text;
-                            const icon = getWeatherIcon(data.current.condition.text);
-                            const humidity = data.current.humidity;
-                            const windSpeed = data.current.wind_kph;
-                            const pressure = data.current.pressure_mb;
-                            const visibility = data.current.vis_km;
-                            
-                            document.getElementById('temperature').textContent = `${temp}°`;
-                            document.getElementById('weatherDescription').textContent = description;
-                            document.getElementById('weatherIcon').textContent = icon;
-                            document.getElementById('humidity').textContent = `${humidity}%`;
-                            document.getElementById('windSpeed').textContent = `${windSpeed} كم/س`;
-                            document.getElementById('pressure').textContent = `${pressure} هـب`;
-                            document.getElementById('visibility').textContent = `${visibility} كم`;
-                        })
-                        .catch(error => {
-                            console.error('خطأ في جلب الطقس:', error);
-                            // استخدام API بديل
-                            getWeatherAlternative(lat, lon);
-                        });
-                }, error => {
-                    console.error('خطأ في تحديد الموقع:', error);
-                    // استخدام بيانات افتراضية
+                    console.log('موقع من IP:', city, country, lat, lon);
+                    
+                    document.getElementById('cityName').textContent = city;
+                    document.getElementById('locationInfo').textContent = country;
+                    
+                    // جلب الطقس باستخدام إحداثيات IP
+                    getWeatherAlternative(lat, lon);
+                })
+                .catch(error => {
+                    console.error('خطأ في تحديد الموقع عبر IP:', error);
                     getWeatherDefault();
                 });
-            } else {
-                getWeatherDefault();
-            }
         }
 
         // API بديل للطقس
@@ -905,49 +959,97 @@
         let prayerTimesData = null;
         
         function getPrayerTimes() {
+            // طلب GPS بدقة عالية للصلاة
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    
-                    // استخدام API للمواقيت
-                    fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=5`)
-                        .then(response => response.json())
-                        .then(data => {
-                            prayerTimesData = data.data.timings;
-                            displayPrayerTimes();
-                            updateNextPrayer();
-                            // تحديث كل دقيقة
-                            setInterval(updateNextPrayer, 60000);
-                        })
-                        .catch(error => {
-                            console.error('خطأ في جلب أوقات الصلاة:', error);
-                            // استخدام بيانات افتراضية
-                            prayerTimesData = {
-                                Fajr: '04:30',
-                                Sunrise: '05:45',
-                                Dhuhr: '12:00',
-                                Asr: '15:30',
-                                Maghrib: '18:00',
-                                Isha: '19:30'
-                            };
-                            displayPrayerTimes();
-                            updateNextPrayer();
-                        });
-                }, error => {
-                    console.error('خطأ في تحديد الموقع:', error);
-                    // استخدام بيانات افتراضية
-                    prayerTimesData = {
-                        Fajr: '04:30',
-                        Sunrise: '05:45',
-                        Dhuhr: '12:00',
-                        Asr: '15:30',
-                        Maghrib: '18:00',
-                        Isha: '19:30'
-                    };
-                    displayPrayerTimes();
-                    updateNextPrayer();
-                });
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        
+                        console.log('GPS للصلاة:', lat, lon);
+                        
+                        // استخدام API للمواقيت
+                        fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=5`)
+                            .then(response => response.json())
+                            .then(data => {
+                                prayerTimesData = data.data.timings;
+                                displayPrayerTimes();
+                                updateNextPrayer();
+                                // تحديث كل دقيقة
+                                setInterval(updateNextPrayer, 60000);
+                            })
+                            .catch(error => {
+                                console.error('خطأ في جلب أوقات الصلاة:', error);
+                                // استخدام بيانات افتراضية
+                                prayerTimesData = {
+                                    Fajr: '04:30',
+                                    Sunrise: '05:45',
+                                    Dhuhr: '12:00',
+                                    Asr: '15:30',
+                                    Maghrib: '18:00',
+                                    Isha: '19:30'
+                                };
+                                displayPrayerTimes();
+                                updateNextPrayer();
+                            });
+                    },
+                    error => {
+                        console.error('GPS للصلاة فشل:', error);
+                        // محاولة GPS عالي الدقة
+                        navigator.geolocation.getCurrentPosition(
+                            position => {
+                                const lat = position.coords.latitude;
+                                const lon = position.coords.longitude;
+                                console.log('GPS عالي الدقة للصلاة:', lat, lon);
+                                
+                                fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=5`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        prayerTimesData = data.data.timings;
+                                        displayPrayerTimes();
+                                        updateNextPrayer();
+                                        setInterval(updateNextPrayer, 60000);
+                                    })
+                                    .catch(error => {
+                                        // استخدام بيانات افتراضية
+                                        prayerTimesData = {
+                                            Fajr: '04:30',
+                                            Sunrise: '05:45',
+                                            Dhuhr: '12:00',
+                                            Asr: '15:30',
+                                            Maghrib: '18:00',
+                                            Isha: '19:30'
+                                        };
+                                        displayPrayerTimes();
+                                        updateNextPrayer();
+                                    });
+                            },
+                            error => {
+                                // استخدام بيانات افتراضية
+                                prayerTimesData = {
+                                    Fajr: '04:30',
+                                    Sunrise: '05:45',
+                                    Dhuhr: '12:00',
+                                    Asr: '15:30',
+                                    Maghrib: '18:00',
+                                    Isha: '19:30'
+                                };
+                                displayPrayerTimes();
+                                updateNextPrayer();
+                            },
+                            {
+                                enableHighAccuracy: true,
+                                timeout: 10000,
+                                maximumAge: 0
+                            }
+                        );
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 15000,
+                        maximumAge: 0
+                    }
+                );
             } else {
                 document.getElementById('prayerTimes').innerHTML = '<div style="color: #ff6b6b; text-align: center;">المتصفح لا يدعم تحديد الموقع</div>';
             }
@@ -1038,48 +1140,86 @@
             // إنشاء علامات البوصلة
             createCompassMarks();
             
+            // طلب GPS بدقة عالية للقبلة
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    
-                    // تحديث الإحداثيات
-                    document.getElementById('latitude').textContent = lat.toFixed(6) + '°';
-                    document.getElementById('longitude').textContent = lon.toFixed(6) + '°';
-                    
-                    // حساب اتجاه القبلة
-                    qiblaAngle = calculateQibla(lat, lon);
-                    document.getElementById('qiblaDirection').textContent = Math.round(qiblaAngle);
-                    
-                    // تحديث حالة GPS
-                    const gpsStatus = document.getElementById('gpsStatus');
-                    gpsStatus.classList.add('active');
-                    gpsStatus.querySelector('.gps-status-text').textContent = 'تم تحديد الموقع بنجاح';
-                    
-                    // تفعيل البوصلة
-                    if (window.DeviceOrientationEvent) {
-                        // طلب الإذن لاستخدام البوصلة (iOS 13+)
-                        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                            DeviceOrientationEvent.requestPermission()
-                                .then(response => {
-                                    if (response === 'granted') {
-                                        window.addEventListener('deviceorientation', handleOrientation);
-                                    }
-                                })
-                                .catch(console.error);
-                        } else {
-                            window.addEventListener('deviceorientation', handleOrientation);
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        
+                        console.log('GPS للقبلة:', lat, lon);
+                        
+                        // تحديث الإحداثيات
+                        document.getElementById('latitude').textContent = lat.toFixed(6) + '°';
+                        document.getElementById('longitude').textContent = lon.toFixed(6) + '°';
+                        
+                        // حساب اتجاه القبلة
+                        qiblaAngle = calculateQibla(lat, lon);
+                        document.getElementById('qiblaDirection').textContent = Math.round(qiblaAngle);
+                        
+                        // تحديث حالة GPS
+                        const gpsStatus = document.getElementById('gpsStatus');
+                        gpsStatus.classList.add('active');
+                        gpsStatus.querySelector('.gps-status-text').textContent = 'تم تحديد الموقع بنجاح';
+                        
+                        // تفعيل البوصلة
+                        if (window.DeviceOrientationEvent) {
+                            // طلب الإذن لاستخدام البوصلة (iOS 13+)
+                            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                                DeviceOrientationEvent.requestPermission()
+                                    .then(response => {
+                                        if (response === 'granted') {
+                                            window.addEventListener('deviceorientation', handleOrientation);
+                                        }
+                                    })
+                                    .catch(console.error);
+                            } else {
+                                window.addEventListener('deviceorientation', handleOrientation);
+                            }
                         }
+                        
+                        // تحديث مؤشر القبلة
+                        updateQiblaIndicator();
+                        
+                    },
+                    error => {
+                        console.error('GPS للقبلة فشل:', error);
+                        // محاولة GPS عالي الدقة
+                        navigator.geolocation.getCurrentPosition(
+                            position => {
+                                const lat = position.coords.latitude;
+                                const lon = position.coords.longitude;
+                                console.log('GPS عالي الدقة للقبلة:', lat, lon);
+                                
+                                document.getElementById('latitude').textContent = lat.toFixed(6) + '°';
+                                document.getElementById('longitude').textContent = lon.toFixed(6) + '°';
+                                qiblaAngle = calculateQibla(lat, lon);
+                                document.getElementById('qiblaDirection').textContent = Math.round(qiblaAngle);
+                                
+                                const gpsStatus = document.getElementById('gpsStatus');
+                                gpsStatus.classList.add('active');
+                                gpsStatus.querySelector('.gps-status-text').textContent = 'تم تحديد الموقع (دقة عالية)';
+                                
+                                updateQiblaIndicator();
+                            },
+                            error => {
+                                console.error('GPS عالي الدقة للقبلة فشل:', error);
+                                const gpsStatus = document.getElementById('gpsStatus');
+                                gpsStatus.querySelector('.gps-status-text').textContent = 'خطأ في تحديد الموقع';
+                            },
+                            {
+                                enableHighAccuracy: true,
+                                timeout: 10000,
+                                maximumAge: 0
+                            }
+                        );
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 15000,
+                        maximumAge: 0
                     }
-                    
-                    // تحديث مؤشر القبلة
-                    updateQiblaIndicator();
-                    
-                }, error => {
-                    console.error('خطأ في تحديد الموقع:', error);
-                    const gpsStatus = document.getElementById('gpsStatus');
-                    gpsStatus.querySelector('.gps-status-text').textContent = 'خطأ في تحديد الموقع';
-                });
+                );
             }
         }
 
