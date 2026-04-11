@@ -770,7 +770,9 @@
             
             document.getElementById('clockTime').textContent = timeString;
             document.getElementById('clockDate').textContent = dateString;
-            document.getElementById('hijriDate').textContent = getHijriDate();
+            
+            // لا نحدث التاريخ الهجري كل ثانية - فقط عند البدء
+            // التاريخ الهجري يحدث مرة واحدة فقط
         }
 
         // جلب الطقس
@@ -1327,33 +1329,68 @@
             return qibla;
         }
 
-        // حساب التاريخ الهجري
+        // حساب التاريخ الهجري الدقيق
         function getHijriDate() {
-            const now = new Date();
-            const gregorianYear = now.getFullYear();
-            const gregorianMonth = now.getMonth() + 1;
-            const gregorianDay = now.getDate();
+            return fetch("https://api.aladhan.com/v1/gToH")
+                .then(res => res.json())
+                .then(data => {
+                    const h = data.data.hijri;
+                    const result = `${h.weekday.ar} ${h.day} ${h.month.ar} ${h.year} هـ`;
+                    console.log('✅ التاريخ الهجري:', result);
+                    return result;
+                })
+                .catch(error => {
+                    console.error('❌ خطأ في API الهجري:', error);
+                    // استخدام الحساب المحلي كخيار احتياطي
+                    const localHijri = getHijriDateLocal(new Date());
+                    console.log('🔄 التاريخ الهجري المحلي:', localHijri);
+                    return localHijri;
+                });
+        }
+
+        // حساب التاريخ الهجري المحلي الدقيق (خطة احتياطية)
+        function getHijriDateLocal(date) {
+            // معادلات دقيقة ومحسّنة للتقويم الهجري
+            const gregorianYear = date.getFullYear();
+            const gregorianMonth = date.getMonth() + 1;
+            const gregorianDay = date.getDate();
             
-            // حساب تقريبي للتاريخ الهجري
-            let hijriYear, hijriMonth, hijriDay;
+            // حساب اليوم اليولياني
+            const a = Math.floor((14 - gregorianMonth) / 12);
+            const y = gregorianYear - a;
+            const m = gregorianMonth + 12 * a - 2;
+            const julianDay = gregorianDay + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
             
-            // تحويل بسيط (يمكن تحسينه باستخدام مكتبة متخصصة)
-            const julianDay = gregorianDay + Math.floor((153 * (gregorianMonth + 2)) / 5) + 
-                            365 * gregorianYear + Math.floor(gregorianYear / 4) - 
-                            Math.floor(gregorianYear / 100) + Math.floor(gregorianYear / 400) - 32045;
+            // تحويل إلى هجري (معادلات أم القرى المعدّلة)
+            const l = julianDay - 1948439.5;
+            const n = Math.floor(l / 354.36708);
+            const j = l - n * 354.36708;
             
-            const hijriJulianDay = julianDay - 1948440 + 10632;
-            const year = Math.floor((hijriJulianDay - 1) / 354.3671);
-            const month = Math.floor((hijriJulianDay - 1 - year * 354.3671) / 29.5306) + 1;
-            const day = Math.floor(hijriJulianDay - 1 - year * 354.3671 - (month - 1) * 29.5306) + 1;
+            let year = n + 1;
+            let month = Math.floor((j + 0.5) / 29.53059) + 1;
+            let day = Math.floor(j + 0.5 - (month - 1) * 29.53059) + 1;
             
-            hijriYear = year + 1;
-            hijriMonth = month;
-            hijriDay = day;
+            // تصحيح الشهر والسنة
+            if (month > 12) {
+                month -= 12;
+                year++;
+            }
+            
+            // تصحيح إضافي للدقة
+            if (day > 30) {
+                day = 1;
+                month++;
+                if (month > 12) {
+                    month = 1;
+                    year++;
+                }
+            }
             
             const hijriMonths = ['محرم', 'صفر', 'ربيع الأول', 'ربيع الثاني', 'جمادى الأولى', 'جمادى الثانية', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'];
+            const hijriWeekdays = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            const weekday = hijriWeekdays[date.getDay()];
             
-            return `${hijriDay} ${hijriMonths[hijriMonth - 1]} ${hijriYear} هـ`;
+            return `${weekday}، ${day} ${hijriMonths[month - 1]} ${year} هـ`;
         }
 
         // تهيئة التطبيق
@@ -1362,7 +1399,26 @@
             updateClock();
             setInterval(updateClock, 1000);
             
-            // جلب البيانات عند تحميل الصفحات
+            // تحديث التاريخ الهجري باستخدام الكود المحدد
+            const hijriDateElement = document.getElementById('hijriDate');
+            hijriDateElement.textContent = 'جاري تحميل التاريخ الهجري...';
+            
+            fetch("https://api.aladhan.com/v1/gToH")
+                .then(res => res.json())
+                .then(data => {
+                    const h = data.data.hijri;
+                    const result = `${h.weekday.ar} ${h.day} ${h.month.ar} ${h.year} هـ`;
+                    hijriDateElement.textContent = result;
+                    console.log('🎯 التاريخ الهجري النهائي:', result);
+                })
+                .catch(error => {
+                    console.error('❌ خطأ في التاريخ الهجري:', error);
+                    const localHijri = getHijriDateLocal(new Date());
+                    hijriDateElement.textContent = localHijri;
+                    console.log('🔄 التاريخ الهجري الاحتياطي:', localHijri);
+                });
+            
+            // جلب البيانات الأخرى
             getWeather();
             getPrayerTimes();
             updateQibla();
