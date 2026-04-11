@@ -784,8 +784,8 @@
                         
                         console.log('تم تحديد الموقع:', lat, lon); // للتتبع
                         
-                        // استخدام API متقدم للطقس مع اسم المدينة
-                        fetch(`https://api.weatherapi.com/v1/current.json?key=demo&q=${lat},${lon}&lang=ar`)
+                        // استخدام API جديد مع المفتاح المحدد
+                        fetch(`https://api.weatherapi.com/v1/current.json?key=62647a895cc24533a7f120015260204&q=${lat},${lon}&lang=ar`)
                             .then(response => response.json())
                             .then(data => {
                                 // اسم المدينة والبلد
@@ -812,6 +812,8 @@
                                 document.getElementById('windSpeed').textContent = `${windSpeed} كم/س`;
                                 document.getElementById('pressure').textContent = `${pressure} هـب`;
                                 document.getElementById('visibility').textContent = `${visibility} كم`;
+                                
+                                console.log('تم تحميل الطقس بنجاح:', cityName);
                             })
                             .catch(error => {
                                 console.error('خطأ في WeatherAPI:', error);
@@ -866,11 +868,37 @@
                     
                     console.log('موقع من IP:', city, country, lat, lon);
                     
-                    document.getElementById('cityName').textContent = city;
-                    document.getElementById('locationInfo').textContent = country;
-                    
-                    // جلب الطقس باستخدام إحداثيات IP
-                    getWeatherAlternative(lat, lon);
+                    // استخدام API جديد مع المفتاح المحدد
+                    fetch(`https://api.weatherapi.com/v1/current.json?key=62647a895cc24533a7f120015260204&q=${lat},${lon}&lang=ar`)
+                        .then(response => response.json())
+                        .then(weatherData => {
+                            const cityName = weatherData.location.name;
+                            const countryName = weatherData.location.country;
+                            const regionName = weatherData.location.region;
+                            const temp = Math.round(weatherData.current.temp_c);
+                            const description = weatherData.current.condition.text;
+                            const icon = getWeatherIcon(weatherData.current.condition.text);
+                            const humidity = weatherData.current.humidity;
+                            const windSpeed = weatherData.current.wind_kph;
+                            const pressure = weatherData.current.pressure_mb;
+                            const visibility = weatherData.current.vis_km;
+                            
+                            document.getElementById('cityName').textContent = cityName;
+                            document.getElementById('locationInfo').textContent = `${regionName}, ${countryName}`;
+                            document.getElementById('temperature').textContent = `${temp}°`;
+                            document.getElementById('weatherDescription').textContent = description;
+                            document.getElementById('weatherIcon').textContent = icon;
+                            document.getElementById('humidity').textContent = `${humidity}%`;
+                            document.getElementById('windSpeed').textContent = `${windSpeed} كم/س`;
+                            document.getElementById('pressure').textContent = `${pressure} هـب`;
+                            document.getElementById('visibility').textContent = `${visibility} كم`;
+                            
+                            console.log('تم تحميل الطقس من IP بنجاح:', cityName);
+                        })
+                        .catch(error => {
+                            console.error('خطأ في الطقس من IP:', error);
+                            getWeatherDefault();
+                        });
                 })
                 .catch(error => {
                     console.error('خطأ في تحديد الموقع عبر IP:', error);
@@ -880,27 +908,31 @@
 
         // API بديل للطقس
         function getWeatherAlternative(lat, lon) {
-            fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=7d9b1e5b7c4d8b1e0c3d3d3b3c3d3c&units=metric&lang=ar`)
+            fetch(`https://api.weatherapi.com/v1/current.json?key=62647a895cc24533a7f120015260204&q=${lat},${lon}&lang=ar`)
                 .then(response => response.json())
                 .then(data => {
-                    const cityName = data.name;
-                    const countryName = data.sys.country;
-                    const temp = Math.round(data.main.temp);
-                    const description = data.weather[0].description;
-                    const icon = getWeatherIcon(data.weather[0].main);
-                    const humidity = data.main.humidity;
-                    const windSpeed = Math.round(data.wind.speed * 3.6); // تحويل من م/ث إلى كم/س
-                    const pressure = data.main.pressure;
+                    const cityName = data.location.name;
+                    const countryName = data.location.country;
+                    const regionName = data.location.region;
+                    const temp = Math.round(data.current.temp_c);
+                    const description = data.current.condition.text;
+                    const icon = getWeatherIcon(data.current.condition.text);
+                    const humidity = data.current.humidity;
+                    const windSpeed = data.current.wind_kph;
+                    const pressure = data.current.pressure_mb;
+                    const visibility = data.current.vis_km;
                     
                     document.getElementById('cityName').textContent = cityName;
-                    document.getElementById('locationInfo').textContent = countryName;
+                    document.getElementById('locationInfo').textContent = `${regionName}, ${countryName}`;
                     document.getElementById('temperature').textContent = `${temp}°`;
                     document.getElementById('weatherDescription').textContent = description;
                     document.getElementById('weatherIcon').textContent = icon;
                     document.getElementById('humidity').textContent = `${humidity}%`;
                     document.getElementById('windSpeed').textContent = `${windSpeed} كم/س`;
                     document.getElementById('pressure').textContent = `${pressure} هـب`;
-                    document.getElementById('visibility').textContent = '-- كم';
+                    document.getElementById('visibility').textContent = `${visibility} كم`;
+                    
+                    console.log('تم تحميل الطقس البديل بنجاح:', cityName);
                 })
                 .catch(error => {
                     console.error('خطأ في API البديل:', error);
